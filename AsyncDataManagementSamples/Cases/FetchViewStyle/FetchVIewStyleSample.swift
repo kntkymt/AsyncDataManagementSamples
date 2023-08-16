@@ -2,11 +2,14 @@ import SwiftUI
 
 private enum DataState<V, E: Error> {
     case idle
+
     case initialLoading
     case reLoading(V)
     case retryLoading(E)
+
     case success(V)
-    case failure(E)
+    case loadingFailure(E)
+    case reLoadingFailure(V, E)
 }
 
 extension DataState {
@@ -14,9 +17,10 @@ extension DataState {
         switch self {
         case .idle:
             self = .initialLoading
-        case .success(let value):
+        case .success(let value),
+                .reLoadingFailure(let value, _):
             self = .reLoading(value)
-        case .failure(let error):
+        case .loadingFailure(let error):
             self = .retryLoading(error)
         default:
             return
@@ -60,29 +64,50 @@ extension DataState {
     }
 
     var isFailure: Bool {
-        if case .failure = self {
+        switch self {
+        case .loadingFailure,
+                .reLoadingFailure:
+            return true
+
+        default:
+            return false
+        }
+    }
+
+    var isLoadingFailure: Bool {
+        if case .loadingFailure = self {
             return true
         }
 
         return false
     }
 
-    var value: V? {
+    var isReLoadingFailure: Bool {
+        if case .reLoadingFailure = self {
+            return true
+        }
+
+        return false
+    }
+
+    var error: (any Error)? {
         switch self {
-        case .reLoading(let value),
-                .success(let value):
-            return value
+        case .retryLoading(let error),
+                .loadingFailure(let error),
+                .reLoadingFailure(_, let error):
+            return error
 
         default:
             return nil
         }
     }
 
-    var error: E? {
+    var value: V? {
         switch self {
-        case .retryLoading(let error),
-                .failure(let error):
-            return error
+        case .reLoading(let value),
+                .success(let value),
+                .reLoadingFailure(let value, _):
+            return value
 
         default:
             return nil
@@ -114,7 +139,7 @@ private final class LoadingContentViewStore<V>: ObservableObject {
         do {
             dataState = .success(try await fetch())
         } catch {
-            dataState = .failure(error)
+            dataState = dataState.value.map { .reLoadingFailure($0, error) } ?? .loadingFailure(error)
         }
     }
 }
@@ -146,10 +171,11 @@ private struct LoadingListContent<V, Success: View>: View {
                 EmptyView()
 
             case .success(let value),
-                    .reLoading(let value):
+                    .reLoading(let value),
+                    .reLoadingFailure(let value, _):
                 success(value)
 
-            case .failure,
+            case .loadingFailure,
                     .retryLoading:
                 ErrorStateView()
                     .frame(height: 300)
