@@ -83,6 +83,14 @@ extension PagingDataState {
         return false
     }
 
+    var isPagingFailure: Bool {
+        if case .pagingFailure = self {
+            return true
+        }
+
+        return false
+    }
+
     var isFailure: Bool {
         switch self {
         case .loadingFailure,
@@ -93,30 +101,6 @@ extension PagingDataState {
         default:
             return false
         }
-    }
-
-    var isLoadingFailure: Bool {
-        if case .loadingFailure = self {
-            return true
-        }
-
-        return false
-    }
-
-    var isReLoadingFailure: Bool {
-        if case .reLoadingFailure = self {
-            return true
-        }
-
-        return false
-    }
-
-    var isPagingFailure: Bool {
-        if case .pagingFailure = self {
-            return true
-        }
-
-        return false
     }
 
     var value: V? {
@@ -146,7 +130,6 @@ extension PagingDataState {
         }
     }
 }
-
 
 struct Case4_Paging: View {
 

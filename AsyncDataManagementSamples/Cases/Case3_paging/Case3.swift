@@ -91,14 +91,6 @@ extension PagingDataState {
         }
     }
 
-    var isLoadingFailure: Bool {
-        if case .loadingFailure = self {
-            return true
-        }
-
-        return false
-    }
-
     var isPagingFailure: Bool {
         if case .pagingFailure = self {
             return true
@@ -107,7 +99,7 @@ extension PagingDataState {
         return false
     }
 
-    public var value: V? {
+    var value: V? {
         switch self {
         case .reLoading(let value),
                 .paging(let value),

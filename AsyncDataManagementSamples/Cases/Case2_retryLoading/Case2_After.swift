@@ -42,33 +42,6 @@ extension DataState {
 
         return false
     }
-
-    var isReLoading: Bool {
-        if case .reLoading = self {
-            return true
-        }
-
-        return false
-    }
-
-    var isRetryLoading: Bool {
-        if case .retryLoading = self {
-            return true
-        }
-
-        return false
-    }
-
-    var value: V? {
-        switch self {
-        case .reLoading(let value),
-                .success(let value):
-            return value
-
-        default:
-            return nil
-        }
-    }
 }
 
 struct Case2_After: View {

@@ -80,14 +80,6 @@ extension PagingDataState {
         return false
     }
 
-    var isSuccess: Bool {
-        if case .success = self {
-            return true
-        }
-
-        return false
-    }
-
     var isFailure: Bool {
         switch self {
         case .loadingFailure,
@@ -99,14 +91,6 @@ extension PagingDataState {
         }
     }
 
-    var isLoadingFailure: Bool {
-        if case .loadingFailure = self {
-            return true
-        }
-
-        return false
-    }
-
     var isPagingFailure: Bool {
         if case .pagingFailure = self {
             return true
@@ -115,7 +99,7 @@ extension PagingDataState {
         return false
     }
 
-    public var value: V? {
+    var value: V? {
         switch self {
         case .reLoading(let value),
                 .paging(let value),
@@ -179,7 +163,7 @@ struct CaseEX_Paging: View {
                         }
                         .frame(height: 100)
                         .frame(maxWidth: .infinity)
-                    } else if dataState.isSuccess {
+                    } else {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .onAppear {

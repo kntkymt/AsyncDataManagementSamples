@@ -47,22 +47,6 @@ extension DataState {
         return false
     }
 
-    var isReLoading: Bool {
-        if case .reLoading = self {
-            return true
-        }
-
-        return false
-    }
-
-    var isRetryLoading: Bool {
-        if case .retryLoading = self {
-            return true
-        }
-
-        return false
-    }
-
     var isFailure: Bool {
         switch self {
         case .loadingFailure,
@@ -72,22 +56,6 @@ extension DataState {
         default:
             return false
         }
-    }
-
-    var isLoadingFailure: Bool {
-        if case .loadingFailure = self {
-            return true
-        }
-
-        return false
-    }
-
-    var isReLoadingFailure: Bool {
-        if case .reLoadingFailure = self {
-            return true
-        }
-
-        return false
     }
 
     var error: (any Error)? {
